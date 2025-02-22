@@ -1,0 +1,195 @@
+import React, { useState } from "react";
+import { User, Mail, Lock, Phone, UserCircle } from "lucide-react";
+
+const Signup = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    phoneNo: "",  // Corrected from phone to phoneNo
+    email: "",  // Corrected from mail to email
+    password: "",
+    confirmPassword: "",
+    gender: "",
+    role: "USER",
+    terms: false,
+  });
+  
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : (name === "gender" ? value.charAt(0).toUpperCase() + value.slice(1) : value),
+    });
+  };
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    console.log("Form Data Submitted:", formData); // Log form data
+  
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+  
+    try {
+      const response = await fetch("http://localhost:8080/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        alert(`Registration failed: ${errorText}`);
+        return;
+      }
+  
+      const result = await response.json();
+      alert("Registration successful");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+  
+
+return (
+  <div className="flex items-center justify-left min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
+    <div className=" bg-white/95 flex justify-left backdrop-blur-sm p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto transform transition-all duration-300 hover:scale-[1.02]">
+      <div className="flex flex-col items-center mb-6">
+      <div className="mr-10">
+        <div className="bg-blue-100 p-3 rounded-full mb-4">
+          <UserCircle className="w-8 h-8 text-blue-600" />
+        </div>
+        <h2 className="flex text-center justify-center text-2xl sm:text-3xl font-bold text-gray-900">Sign Up</h2>
+        <p className="flex text-center justify-center sm:text-base text-gray-600 mt-2">Create a new account</p>
+        </div>
+      </div>
+
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        {/* Name Input */}
+        <div className="relative">
+          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+          <input
+            name="name"
+            type="text"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            required
+          />
+        </div>
+
+        {/* Phone Input */}
+        <div className="relative">
+          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+          <input
+            name="phoneNo"
+            type="tel"
+            placeholder="Phone Number"
+            value={formData.phoneNo}
+            onChange={handleChange}
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            required
+          />
+        </div>
+
+        {/* Email Input */}
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            required
+          />
+        </div>
+
+        {/* Gender Select */}
+        <div className="relative">
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className="w-full pl-4 pr-8 py-2.5 border border-gray-200 rounded-lg bg-white cursor-pointer focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            required
+          >
+            <option value="" disabled>Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        {/* Password Input */}
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            required
+          />
+        </div>
+
+        {/* Confirm Password Input */}
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+          <input
+            name="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            required
+          />
+        </div>
+
+        <input type="hidden" name="role" value="USER" />
+
+        {/* Terms Checkbox */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="terms"
+            name="terms"
+            checked={formData.terms}
+            onChange={handleChange}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+          />
+          <label htmlFor="terms" className="ml-2 text-sm text-gray-900">
+            I agree to the <a href="/terms" className="text-blue-600 hover:underline">Terms and Conditions</a>
+          </label>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 transform hover:scale-[1.02]"
+        >
+          Sign Up
+        </button>
+
+        {/* Login Link */}
+        <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Already have an account? <a href="/login" className="text-blue-600 hover:underline">Login</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+);};  
+
+export default Signup;
