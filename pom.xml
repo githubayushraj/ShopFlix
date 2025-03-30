@@ -90,6 +90,14 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+			<version>3.2.2</version> <!-- Use the latest version compatible with your Spring Boot version -->
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
