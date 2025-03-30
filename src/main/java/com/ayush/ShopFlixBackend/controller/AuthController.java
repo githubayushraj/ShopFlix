@@ -3,6 +3,7 @@ package com.ayush.ShopFlixBackend.controller;
 import com.ayush.ShopFlixBackend.entity.Users;
 import com.ayush.ShopFlixBackend.model.AuthenticationRequest;
 import com.ayush.ShopFlixBackend.model.AuthenticationResponse;
+import com.ayush.ShopFlixBackend.security.JwtHelper;
 import com.ayush.ShopFlixBackend.services.usersServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

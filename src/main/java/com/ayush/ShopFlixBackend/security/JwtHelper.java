@@ -18,7 +18,6 @@ import java.util.function.Function;
 @Component
 public class JwtHelper {
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000; // 5 hours (in milliseconds)
     private SecretKey secretKey;
 
     @PostConstruct
@@ -38,7 +37,6 @@ public class JwtHelper {
         secretKey = Keys.hmacShaKeyFor(envSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-
     // Retrieve username from JWT token
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -54,9 +52,14 @@ public class JwtHelper {
         return claimsResolver.apply(claims);
     }
 
-    // Retrieve all claims from token
+    // Retrieve all claims from token with allowed clock skew of 60 seconds
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setAllowedClockSkewSeconds(60) // Allows a 60-second skew
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     // Check if the token has expired
@@ -76,7 +79,7 @@ public class JwtHelper {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
+                .setExpiration(new Date(System.currentTimeMillis() + 5 * 1000 * 60 * 60)) // 5 hours expiration
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
